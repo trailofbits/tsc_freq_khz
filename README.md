@@ -1,6 +1,6 @@
 # A `tsc_freq_khz` Driver for Everyone
 
-This driver exports the Linux kernel's `tsc_khz` variable via sysfs (in `/sys/devices/system/cpu/cpu0/tsc_freq_khz`) and enabled profiling and benchmarking tools to work in virtualized environments. It also makes these tools more accurate on systems where the time stamp counter is independent from clockspeed, like Skylake and new Intel processors.
+This driver exports the [Linux kernel's `tsc_khz` variable](https://github.com/torvalds/linux/blob/4ae004a9bca8bef118c2b4e76ee31c7df4514f18/arch/x86/kernel/tsc.c#L35-L36) via sysfs (in `/sys/devices/system/cpu/cpu0/tsc_freq_khz`) and enabled profiling and benchmarking tools to work in virtualized environments. It also makes these tools more accurate on systems where the time stamp counter is independent from clockspeed, like Skylake and new Intel processors.
 
 Several open source projects (X-Ray, Abseil) already check for this sysfs file, but until now it was only available in Google's production kernels.
 
@@ -47,7 +47,7 @@ The Linux kernel conveniently provides a proper exported symbol named `tsc_khz`.
 
 ## Technical Details
 
-This module creates a sysfs entry that reads the `tsc_khz` variable defined by the kernel. Whether that value makes sense or is otherwise useful depends on the context and underlying hardware.
+This module creates a sysfs entry that reads the [`tsc_khz` variable defined by the kernel](https://github.com/torvalds/linux/blob/4ae004a9bca8bef118c2b4e76ee31c7df4514f18/arch/x86/kernel/tsc.c#L35-L36). Whether that value makes sense or is otherwise useful depends on the context and underlying hardware.
 
 For example, on x86-based systems, using this tool only makes sense if your CPU supports `rdtscp` and a constant and non-stop TSC. This should be true for all relatively recent processors. You can use the fields in `/proc/cpuinfo` to check, just in case:
 ```sh
