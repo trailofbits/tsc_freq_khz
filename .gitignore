@@ -1,0 +1,8 @@
+tsc_freq_khz.mod.c
+.tmp_versions
+.cache.mk
+.*.cmd
+*.ko
+*.o
+Module.symvers
+modules.order
