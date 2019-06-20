@@ -1,8 +1,8 @@
-# A `tsc_khz_freq` Driver for Everyone
+# A `tsc_freq_khz` Driver for Everyone
 
-This driver exports the Linux kernel's `tsc_khz` variable via sysfs (in `/sys/devices/system/cpu/cpu0/tsc_freq_khz`) and enabled profiling and benchmarking tools to work in virtualized environments. It also makes these tools more accurate on systems where the time stamp counter is independent from clockspeed, like Skylake and new Intel processors.o
+This driver exports the Linux kernel's `tsc_khz` variable via sysfs (in `/sys/devices/system/cpu/cpu0/tsc_freq_khz`) and enabled profiling and benchmarking tools to work in virtualized environments. It also makes these tools more accurate on systems where the time stamp counter is independent from clockspeed, like Skylake and new Intel processors.
 
-Several open source projects already check for this value, but until now it was only available in Google's production kernels.
+Several open source projects (X-Ray, Abseil) already check for this sysfs file, but until now it was only available in Google's production kernels.
 
 This driver enables it for everyone.
 
