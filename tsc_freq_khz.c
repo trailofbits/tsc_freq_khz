@@ -2,8 +2,7 @@
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/cpu.h>
-//#include <linux/arch/x86/include/asm/tsc.h>
-extern unsigned int tsc_khz;
+#include <asm/tsc.h> // extern unsigned int tsc_khz;
 #include <linux/printk.h>
 #include <linux/kobject.h>
 #include <linux/sysfs.h>
