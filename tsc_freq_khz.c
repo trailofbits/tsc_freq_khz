@@ -21,7 +21,7 @@ static ssize_t tsc_freq_khz_show(struct kobject *kobj, struct kobj_attribute *at
                       char *buf)
 {
 	ssize_t r;
-	r = sprintf(buf, "%d\n", tsc_khz);
+	r = sprintf(buf, "%u\n", tsc_khz);
 	return r;
 }
 
