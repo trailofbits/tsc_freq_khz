@@ -25,18 +25,11 @@ static ssize_t tsc_freq_khz_show(struct kobject *kobj, struct kobj_attribute *at
 	return r;
 }
 
-static ssize_t tsc_freq_khz_store(struct kobject *kobj, struct kobj_attribute *attr,
-                      const char *buf, size_t count)
-{
-	// unimplemented
-	return count;
-}
-
 static struct kobj_attribute tsc_freq_khz_attribute =
 	__ATTR(tsc_freq_khz,
 				 S_IRUGO, // world readable, unchangeable
 				 tsc_freq_khz_show,
-				 tsc_freq_khz_store);
+				 NULL); // store not implemented
 
 static int __init tsc_khz_init(void){
 	struct device *dev;
