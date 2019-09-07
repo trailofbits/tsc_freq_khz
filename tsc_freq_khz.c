@@ -54,14 +54,14 @@ static int __init tsc_khz_init(void){
 }
  
 static void __exit tsc_khz_exit(void) {
-	 struct device *dev;
-   printk(KERN_INFO DRIVER_NAME ": unloading driver\n");
-	 dev = get_cpu_device(0); // assumes always a cpu0
-	 if (!dev) {
-		 printk(KERN_INFO DRIVER_NAME ": could not get device for CPU %d\n", 0);
-		 return;
-	 }
-	 sysfs_remove_file(&dev->kobj, &tsc_freq_khz_attribute.attr);
+	struct device *dev;
+	printk(KERN_INFO DRIVER_NAME ": unloading driver\n");
+	dev = get_cpu_device(0); // assumes always a cpu0
+	if (!dev) {
+		printk(KERN_INFO DRIVER_NAME ": could not get device for CPU %d\n", 0);
+		return;
+	}
+	sysfs_remove_file(&dev->kobj, &tsc_freq_khz_attribute.attr);
 }
  
 module_init(tsc_khz_init);
