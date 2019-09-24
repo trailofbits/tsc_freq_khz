@@ -1,8 +1,8 @@
 # A `tsc_freq_khz` Driver for Everyone
 
-This driver exports the [Linux kernel's `tsc_khz` variable](https://github.com/torvalds/linux/blob/4ae004a9bca8bef118c2b4e76ee31c7df4514f18/arch/x86/kernel/tsc.c#L35-L36) via sysfs (in `/sys/devices/system/cpu/cpu0/tsc_freq_khz`) and enabled profiling and benchmarking tools to work in virtualized environments. It also makes these tools more accurate on systems where the time stamp counter is independent from clockspeed, like Skylake and new Intel processors.
+This driver exports the [Linux kernel's `tsc_khz` variable](https://github.com/torvalds/linux/blob/4ae004a9bca8bef118c2b4e76ee31c7df4514f18/arch/x86/kernel/tsc.c#L35-L36) via `sysfs` (in `/sys/devices/system/cpu/cpu0/tsc_freq_khz`) and enabled profiling and benchmarking tools to work in virtualized environments. It also makes these tools more accurate on systems where the time stamp counter is independent from clock speed, like newer Intel processors.
 
-Several open source projects (X-Ray, Abseil) already check for this sysfs file, but until now it was only available in Google's production kernels.
+Several open source projects (X-Ray, Abseil) already check for this `sysfs` file, but until now it was only available in Google's production kernels.
 
 This driver enables it for everyone.
 
@@ -14,16 +14,16 @@ Very useful profiling tools (like [LLVM's X-Ray](https://llvm.org/docs/XRay.html
 
 To translate TSC tics to seconds, we need to know how fast the TSC is ticking.
 
-Getting this information was impossible in cloud-based or other virtualized enviornments. The kernel does not export the TSC frequency directly, and the best approximation was the processor's maximum clockspeed. 
+Getting this information was impossible in cloud-based or other virtualized environments. The kernel does not export the TSC frequency directly, and the best approximation was the processor's maximum clock speed. 
 
-Using maximum clockspeed as an approximation for TSC frequency has two big problems:
+Using maximum clock speed as an approximation for TSC frequency has two big problems:
 
-* Starting with Skylake, the two values are different. Relying on maximum clockspeed as TSC frequency gives the wrong results.
-* The maximum CPU clockspeed, accessible via `/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq`, was not available in cloud-based or other virtualized environments. The value is populated by the `cpufreq` driver used for frequency scaling. Naturally, such operations are not (typically) permitted in virtualized environments.
+* The two values may be different. Relying on maximum clock speed as TSC frequency gives the wrong results.
+* The maximum CPU clock speed, accessible via `/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq`, was not available in cloud-based or other virtualized environments. The value is populated by the `cpufreq` driver used for frequency scaling, which is not typically permitted in virtualized environments.
 
 ## A Hint from Google
 
-Some [timestamp measuerement code in LLVM's X-Ray](https://github.com/llvm-mirror/compiler-rt/blob/02495e511b3020bf41f7d53d8fcfd184d985c83a/lib/xray/xray_x86_64.cc#L77) refers to a mystery sysfs entry named `/sys/devices/system/cpu/cpu0/tsc_freq_khz`, which sounds like it provides *exactly what we need*. Unfortunately there are absolutely *no* references to it in the Linux kernel source code.
+Some [timestamp measuerement code in LLVM's X-Ray](https://github.com/llvm-mirror/compiler-rt/blob/02495e511b3020bf41f7d53d8fcfd184d985c83a/lib/xray/xray_x86_64.cc#L77) refers to a mystery `sysfs` entry named `/sys/devices/system/cpu/cpu0/tsc_freq_khz`, which sounds like it provides *exactly what we need*. Unfortunately there are absolutely *no* references to it in the Linux kernel source code.
 
 More searching reveals the following hint in [the Abseil source code](https://github.com/abseil/abseil-cpp/blob/master/absl/base/internal/sysinfo.cc#L219-L229): 
 
@@ -43,11 +43,11 @@ More searching reveals the following hint in [the Abseil source code](https://gi
 
 So the value only exists in Google's production kernel, but it is not upstreamed to the mainline kernel tree.
 
-The Linux kernel conveniently provides a proper exported symbol named `tsc_khz`. So it was only the simple matter of writing a driver to export it via sysfs, and everyone could have access to the timestamp counter frequency.
+The Linux kernel conveniently provides a proper exported symbol named `tsc_khz`. So it was only the simple matter of writing a driver to export it via `sysfs`, and everyone could have access to the timestamp counter frequency.
 
 ## Technical Details
 
-This module creates a sysfs entry that reads the [`tsc_khz` variable defined by the kernel](https://github.com/torvalds/linux/blob/4ae004a9bca8bef118c2b4e76ee31c7df4514f18/arch/x86/kernel/tsc.c#L35-L36). Whether that value makes sense or is otherwise useful depends on the context and underlying hardware.
+This module creates a `sysfs` entry that reads the [`tsc_khz` variable defined by the kernel](https://github.com/torvalds/linux/blob/4ae004a9bca8bef118c2b4e76ee31c7df4514f18/arch/x86/kernel/tsc.c#L35-L36). Whether that value makes sense or is otherwise useful depends on the context and underlying hardware.
 
 For example, on x86-based systems, using this tool only makes sense if your CPU supports `rdtscp` and a constant and non-stop TSC. This should be true for all relatively recent processors. You can use the fields in `/proc/cpuinfo` to check, just in case:
 ```sh
@@ -88,6 +88,6 @@ $ cat /sys/devices/system/cpu/cpu0/tsc_freq_khz
 2712020
 ```
 
-## Futue Work
+## Future Work
 
-We may add some sanity checks to ensure this driver only loads on hardware with the appropriate TSC-related features.
+This module needs sanity checks to ensure that this driver only loads on hardware with the appropriate TSC-related features.
